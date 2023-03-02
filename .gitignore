@@ -1,0 +1,9 @@
+*.zip
+*.jpeg
+*.jpg
+*.png
+*.JPEG
+*.PNG
+*.log
+*.ckpt
+logs/
