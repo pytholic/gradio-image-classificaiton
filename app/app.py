@@ -64,58 +64,36 @@ def predict(image):
             output = model(image)
             # convert to probabilities
             probabilities = torch.nn.functional.softmax(torch.exp(output[0]), dim=0)
-            print(probabilities)
             topk_prob, topk_label = torch.topk(probabilities, 3)
 
-            # convert the predictions to a list
-            predictions = []
-            for i in range(topk_prob.size(0)):
-                prob = topk_prob[i].item()
-                label = topk_label[i].item()
-                predictions.append((prob, label))
-
-            return predictions
+            # Return the top 3 predictions
+        return {labels[i]: float(probabilities[i]) for i in range(3)}
     except Exception as e:
         print(f"Error predicting image: {e}")
         return []
 
 
-# Define the Streamlit app
+# Define the interface
 def app():
+    title = "Animal-10 Image Classification"
+    description = "Classify images using a custom CNN model and deploy using Gradio."
 
-    # Define the input and output interfaces
-    inputs = gr.inputs.Image()
-    outputs = gr.outputs.Label(num_top_classes=3)
-
-    # Create the Gradio interface
-    iface = gr.Interface(
-        predict,
-        inputs,
-        outputs,
-        title="Animal-10 Classifier",
-        description="Classify images of 10 different animals.",
+    gr.Interface(
+        title=title,
+        description=description,
+        fn=predict,
+        inputs=gr.Image(type="pil"),
+        outputs=gr.Label(
+            num_top_classes=3,
+        ),
         examples=[
-            ["./test_images/dog.jpeg"],
-            ["./test_images/cat.jpeg"],
-            ["./test_images/butterfly.jpeg"],
-            ["./test_images/elephant.jpg"],
-            ["./test_images/horse.jpeg"],
+            "./test_images/dog.jpeg",
+            "./test_images/cat.jpeg",
+            "./test_images/butterfly.jpeg",
+            "./test_images/elephant.jpg",
+            "./test_images/horse.jpeg",
         ],
-    )
-
-    # Set the styling of the title bar
-    iface.layout["title_bar_color"] = "#4E4E4E"
-    iface.layout["title_color"] = "white"
-
-    # Set the styling of the progress bars
-    for i in range(3):
-        iface.layout[f"output_{i}"]["style"]["progress_bar_color"] = "#FFA500"
-
-    return iface
-
-
-# Run the app
-app().launch()
+    ).launch()
 
 
 # Run the app
