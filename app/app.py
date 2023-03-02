@@ -2,15 +2,13 @@ import os
 import sys
 
 current = os.path.dirname(os.path.realpath(__file__))
-
 parent = os.path.dirname(current)
-
 sys.path.append(parent)
 
 import albumentations as A
+import gradio as gr
 import matplotlib.pyplot as plt
 import numpy as np
-import streamlit as st
 import torch
 from albumentations.pytorch import ToTensorV2
 from PIL import Image
@@ -84,47 +82,40 @@ def predict(image):
 
 # Define the Streamlit app
 def app():
-    st.title("Animal-10 Image Classification")
 
-    # Add a file uploader
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    # Define the input and output interfaces
+    inputs = gr.inputs.Image()
+    outputs = gr.outputs.Label(num_top_classes=3)
 
-    # # Add a selectbox to choose from sample images
-    sample = st.selectbox("Or choose from sample images:", list(sample_images.keys()))
+    # Create the Gradio interface
+    iface = gr.Interface(
+        predict,
+        inputs,
+        outputs,
+        title="Animal-10 Classifier",
+        description="Classify images of 10 different animals.",
+        examples=[
+            ["./test_images/dog.jpeg"],
+            ["./test_images/cat.jpeg"],
+            ["./test_images/butterfly.jpeg"],
+            ["./test_images/elephant.jpg"],
+            ["./test_images/horse.jpeg"],
+        ],
+    )
 
-    # If an image is uploaded, make a prediction on it
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image.", use_column_width=True)
-        predictions = predict(image)
+    # Set the styling of the title bar
+    iface.layout["title_bar_color"] = "#4E4E4E"
+    iface.layout["title_color"] = "white"
 
-    # If a sample image is chosen, make a prediction on it
-    elif sample:
-        image = Image.open(sample_images[sample])
-        st.image(image, caption=sample.capitalize() + " Image.", use_column_width=True)
-        predictions = predict(image)
+    # Set the styling of the progress bars
+    for i in range(3):
+        iface.layout[f"output_{i}"]["style"]["progress_bar_color"] = "#FFA500"
 
-    # Show the top 3 predictions with their probabilities
-    if predictions:
-        st.write("Top 3 predictions:")
-        for i, (prob, label) in enumerate(predictions):
-            st.write(f"{i+1}. {labels[label]} ({prob*100:.2f}%)")
+    return iface
 
-            # Show progress bar with probabilities
-            st.markdown(
-                """
-                <style>
-                .stProgress .st-b8 {
-                    background-color: orange;
-                }
-                </style>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.progress(prob)
 
-    else:
-        st.write("No predictions.")
+# Run the app
+app().launch()
 
 
 # Run the app
