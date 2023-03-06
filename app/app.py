@@ -11,9 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from albumentations.pytorch import ToTensorV2
-from PIL import Image
-
 from model import Classifier
+from PIL import Image
 
 # Load the model
 model = Classifier.load_from_checkpoint("./models/checkpoint.ckpt")
@@ -88,7 +87,7 @@ def app():
             "./test_images/elephant.jpg",
             "./test_images/horse.jpeg",
         ],
-    ).launch()
+    ).launch(share=True)
 
 
 # Run the app
