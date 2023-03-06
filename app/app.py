@@ -11,8 +11,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from albumentations.pytorch import ToTensorV2
-from model import Classifier
 from PIL import Image
+
+from model import Classifier
 
 # Load the model
 model = Classifier.load_from_checkpoint("./models/checkpoint.ckpt")
@@ -55,8 +56,13 @@ def predict(image):
             # convert to probabilities
             probabilities = torch.nn.functional.softmax(output[0])
 
+            # get top probabilities
+            topk_prob, topk_label = torch.topk(probabilities, 3)
+
             # Return the top 3 predictions
-        return {labels[i]: float(probabilities[i]) for i in range(3)}
+        return {
+            labels[label]: float(prob) for label, prob in zip(topk_label, topk_prob)
+        }
     except Exception as e:
         print(f"Error predicting image: {e}")
         return []
