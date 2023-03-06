@@ -70,7 +70,6 @@ def predict(image):
 # Define the interface
 def app():
     title = "Animal-10 Image Classification"
-    description = "Classify images using a custom CNN model and deploy using Gradio."
 
     gr.Interface(
         title=title,
