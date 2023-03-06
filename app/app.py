@@ -63,11 +63,18 @@ def predict(image):
         with torch.no_grad():
             output = model(image)
             # convert to probabilities
-            probabilities = torch.nn.functional.softmax(torch.exp(output[0]), dim=0)
+            probabilities = torch.nn.functional.softmax(output[0])
+
             topk_prob, topk_label = torch.topk(probabilities, 3)
 
-            # Return the top 3 predictions
-        return {labels[i]: float(probabilities[i]) for i in range(3)}
+            # convert the predictions to a list
+            predictions = []
+            for i in range(topk_prob.size(0)):
+                prob = topk_prob[i].item()
+                label = topk_label[i].item()
+                predictions.append((prob, label))
+
+            return predictions
     except Exception as e:
         print(f"Error predicting image: {e}")
         return []
