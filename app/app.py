@@ -87,7 +87,7 @@ def app():
             "./test_images/elephant.jpg",
             "./test_images/horse.jpeg",
         ],
-    ).launch(share=True)
+    ).launch()
 
 
 # Run the app
