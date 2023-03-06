@@ -75,7 +75,7 @@ def app():
         outputs=gr.Label(
             num_top_classes=3,
         ),
-        examples=examples=[
+        examples=[
             "./test_images/dog.jpeg",
             "./test_images/cat.jpeg",
             "./test_images/butterfly.jpeg",
