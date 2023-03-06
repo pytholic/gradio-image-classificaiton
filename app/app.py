@@ -11,9 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from albumentations.pytorch import ToTensorV2
-from PIL import Image
-
 from model import Classifier
+from PIL import Image
 
 # Load the model
 model = Classifier.load_from_checkpoint("./models/checkpoint.ckpt")
@@ -44,15 +43,6 @@ def preprocess(image):
     return image
 
 
-# Define the sample images
-sample_images = {
-    "dog": "./test_images/dog.jpeg",
-    "cat": "./test_images/cat.jpeg",
-    "butterfly": "./test_images/butterfly.jpeg",
-    "elephant": "./test_images/elephant.jpg",
-    "horse": "./test_images/horse.jpeg",
-}
-
 # Define the function to make predictions on an image
 def predict(image):
     try:
@@ -65,16 +55,8 @@ def predict(image):
             # convert to probabilities
             probabilities = torch.nn.functional.softmax(output[0])
 
-            topk_prob, topk_label = torch.topk(probabilities, 3)
-
-            # convert the predictions to a list
-            predictions = []
-            for i in range(topk_prob.size(0)):
-                prob = topk_prob[i].item()
-                label = topk_label[i].item()
-                predictions.append((prob, label))
-
-            return predictions
+            # Return the top 3 predictions
+        return {labels[i]: float(probabilities[i]) for i in range(3)}
     except Exception as e:
         print(f"Error predicting image: {e}")
         return []
@@ -93,7 +75,7 @@ def app():
         outputs=gr.Label(
             num_top_classes=3,
         ),
-        examples=[
+        examples=examples=[
             "./test_images/dog.jpeg",
             "./test_images/cat.jpeg",
             "./test_images/butterfly.jpeg",
