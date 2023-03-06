@@ -84,7 +84,7 @@ def app():
             "./test_images/dog.jpeg",
             "./test_images/cat.jpeg",
             "./test_images/butterfly.jpeg",
-            "./test_images/elephant.jpg",
+            "./test_images/chicken.jpeg",
             "./test_images/horse.jpeg",
         ],
     ).launch()
