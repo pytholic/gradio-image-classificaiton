@@ -73,7 +73,6 @@ def app():
 
     gr.Interface(
         title=title,
-        description=description,
         fn=predict,
         inputs=gr.Image(type="pil"),
         outputs=gr.Label(
@@ -83,7 +82,6 @@ def app():
             "./test_images/dog.jpeg",
             "./test_images/cat.jpeg",
             "./test_images/butterfly.jpeg",
-            "./test_images/chicken.jpeg",
             "./test_images/horse.jpeg",
         ],
     ).launch()
